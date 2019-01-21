@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# pw.py
+#!/usr/bin/python3
+# pw.py - An insecure password program
 
 PASSWORDS = {'email': 'sklahlkdshgiusdhuioe',
              'blog': 'jsdhfkjhwieuyrwigbx',
@@ -14,4 +14,10 @@ if len(sys.argv) < 2:
 
 account = sys.argv[1]   # first command line arg is the account name
 
-print(account)
+print('Working with : ' + account)
+
+if account in PASSWORDS:
+    pyperclip.copy(PASSWORDS[account])
+    print('Password for ' + account + ' copped to clipboard.')
+else:
+    print('There is no account named' + account)
