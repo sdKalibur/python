@@ -7,7 +7,7 @@ Challenge:
 The tool should have multiple commands. Depending on which command is run, it should:
 
 1. Print running services to stdout (similar to the table below) 
-
+Done
 2. Print out average CPU/Memory of services of the same type 
 
 3. Flag services which have fewer than 2 healthy instances running 

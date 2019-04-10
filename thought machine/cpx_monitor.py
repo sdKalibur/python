@@ -4,25 +4,16 @@ import pycurl
 import urllib3
 import urllib
 import requests
+import re
 
 server_ip = '10.58.1.10'
 server_subnet = '10.58.1.'
 first_server = 1
 last_server = 15
 service_name = 'AuthService'
-host_ip = '10.42.0.206'
+host_ip = '0.0.0.0'
 host_port = 8080
-# str(host_url) = host_ip + ':' + host_port
 
-# urllib.request('http://localhost:8080')
-# http = urllib3.poolmanager()
-# r = http.request('GET', 'http://localhost:8080')
-# var = r.status
-# print( server_ip + r'/' + service_name)
-
-#class getRequest(mon_request):
-
-#    r = requests.get()
 def httpGet():
     r = requests.get('http://' + str(host_ip) + ':' + str(host_port))
     print(r.text)
@@ -55,16 +46,38 @@ def httpGetMultiServers(first_server, last_server):
 
 # print(str(host_url))
 # print(r.content)
+numRegex = re.compile(r'\d*')
+
 def clusterHealth():
-    print(server_health.keys()) # do if elif until one server is found
-    for i in range(1,10):
+    """
+    1. Print running services to stdout (similar to the table below)
+    """
+    for title in ['IP','Service','Status', 'CPU','Memory']:
+        print(title.ljust(18), end='| ')
+    print('\n' + '-' * 96)
 
-        print(server_subnet + str(i), end='\t')# , httpGetServer(server_subnet + str(i)))
-        server_health = httpGetServer(server_subnet + str(i))
+    print('\n')
+    for i in range(1,151):
+        server_status = 'unknown'
+        print((server_subnet + str(i)).ljust(16), end=' ')
+        server_health = httpGetServer(server_subnet + str(i)) # add Heath here
+        cpu_health = numRegex.search(server_health['cpu']).group()
+        mem_health = numRegex.search(server_health['memory']).group()
+        if 85 <= int(cpu_health):
+            server_status = 'UNHEALTHY'
+        elif 85 <= int(mem_health):
+            server_status = 'UNHEALTHY'
+        else:
+            server_status='HEALTHY'
+        # print(server_status)
+        server_health['status'] = server_status
 
-        for y in ['service', 'cpu', 'memory']:
-            print(server_health[y].ljust(16), end='\t')
-        print('\n' + '-' * 60)
+        for y in ['service', 'status', 'cpu', 'memory']:
+            print(server_health[y].ljust(18), end='| ')
+        print('\n' + '-' * 6)
+
+#def serviceHealth(service):
+
 
 clusterHealth()
 
