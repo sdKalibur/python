@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""1. Print running services to stdout (similar to the table below)
+Done"""
 
 import pycurl
 import urllib3
@@ -56,7 +58,6 @@ def clusterHealth():
         print(title.ljust(18), end='| ')
     print('\n' + '-' * 96)
 
-    print('\n')
     for i in range(1,151):
         server_status = 'unknown'
         print((server_subnet + str(i)).ljust(16), end=' ')
@@ -74,7 +75,7 @@ def clusterHealth():
 
         for y in ['service', 'status', 'cpu', 'memory']:
             print(server_health[y].ljust(18), end='| ')
-        print('\n' + '-' * 6)
+        print('\n' + '-' * 96)
 
 #def serviceHealth(service):
 
