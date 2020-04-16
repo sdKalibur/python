@@ -2,12 +2,11 @@
 
 ## Problem Statement
 * inputs:
-** Ticky app syslog file events
-*** success
-*** error
-* Generate usage stats:
-**
-**
+  * Ticky app syslog file events
+    * success
+    * error
+  * Generate usage stats:
+
 ### Desired outcome
 * regex to parse syslog
 * append and modify values in dictionary
