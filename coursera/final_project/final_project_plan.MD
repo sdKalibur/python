@@ -17,6 +17,13 @@
 
 
 ## Planning
-
-* use regex
+* testing:
+  * check only 'ticky' app logs are matched i,e correct group/column in log file
+  * check for string match
+  * check for string match position
+  * check for string match among other characters e,g 'ben' NOT 'burdenned'
+* Order of operation:
+  1. find matching *ticky* events
+  2. separate failures and successful events
+  3. append to *ticky* events report
 ## Writing
