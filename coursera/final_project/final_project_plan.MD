@@ -13,7 +13,10 @@
 * Move files to appropriet directory to use with CSV->HTML  converter
 
 ## Research
-
+### Tools, libs, modules
+* re - regex modules
+* csv - read and write CSV
+* python/bash - to run the script(s)
 
 
 ## Planning
