@@ -44,10 +44,12 @@ sample event:
 ### Order of operation:
   1. find matching *ticky* events
   2. separate failures and successful events
-  3. append to *ticky* events report
+  3. Exclude pid numbers and special characters
+  4. Sort by most common
+  5. append to *ticky* events report
 
 ###  Report 1 Error rankings:
-  - dict of Error Message : number of errors
+  * dict of Error Message : number of errors
     Errors = {'Error msg1' : 5 , 'Error msg2' : 34 }
   * Generate a report order by desc by value.
 
@@ -60,3 +62,15 @@ sample event:
   3. int (values)
 
 ## Writing
+
+
+
+regex = r"ticky: INFO ([\w ]*) "
+re.search(regex, line)
+  <_sre.SRE_Match object; span=(29, 56), match='ticky: INFO Created ticket '>
+
+
+sorted(fruit.items(), key=operator.itemgetter(0))
+[('apples', 5), ('bananas', 7), ('oragnes', 3), ('pears', 2)]
+sorted(fruit.items(), key=operator.itemgetter(1), reverse=True)
+[('pears', 2), ('oragnes', 3), ('apples', 5), ('bananas', 7)]
