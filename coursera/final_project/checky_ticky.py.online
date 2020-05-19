@@ -1,0 +1,98 @@
+#!/usr/bin/env python3 
+
+
+import re, csv, sys
+from operator import itemgetter 
+
+ticky_errors = {}
+ticky_usage = {}
+ticky_sets = {}
+syslog = sys.argv[1]
+
+def get_ticky_events(syslog):
+    ticky_errors = {}
+    with open(syslog, 'r') as f:
+        for line in f.readlines():
+            event = line.strip()
+            regex = r"ticky: ERROR ([\w \']*)"
+            error = re.search(regex, event)
+
+            if error:
+                error = error.group(1)
+                if error not in ticky_errors.keys():
+                    ticky_errors.update({error:1})
+                else:
+                    ticky_errors[error] += 1
+        f.close()
+    ticky_errors = sorted(ticky_errors.items(), key=itemgetter(1), reverse=True)
+    return ticky_errors
+
+def get_ticky_stats(syslog):
+
+    ticky_sets.update({'success': []})
+    ticky_sets.update({'error': []})
+    with open(syslog, 'r') as f:
+        for line in f.readlines():
+            event = line.strip()
+            regex = r"ticky: \b(ERROR|INFO)\b.* [\w\s\[\]\#\' ]* \(([\w ]+)\)$"
+            stat = re.search(regex, event)
+
+            if stat:
+                #print(stat.group(1))
+                if stat.group(1) == 'INFO':
+                    ticky_sets['success'].append(stat.group(2))
+                elif stat.group(1) == 'ERROR':
+                    ticky_sets['error'].append(stat.group(2))
+
+        f.close()
+        return ticky_sets
+
+
+def error_report(errors):
+    with open('error_message.csv', 'w+', newline="") as f:
+        writer = csv.writer(f, delimiter=',')
+        writer.writerow(['Error','Count'])
+        for x in errors:
+            writer.writerow(x)
+        f.close()
+
+def usage_report(ticky_sets):
+    
+    with open('user_statistics.csv','w+',newline="") as f:
+        #field_names = 'Username','INFO','ERROR'
+        writer = csv.DictWriter(f,field_names)
+        success = ticky_sets['success']
+        error = ticky_sets['error']
+
+        for x in userlist:
+            ticky_usage.update({'Username': x , 'INFO': success.count(x), 'ERROR': error.count(x)})
+        
+        # ticky_usage = sorted(ticky_usage)
+        writer.writeheader()
+        writer.writerows(ticky_usage)
+        f.close()
+
+
+def create_userlist(syslog):
+    with open(syslog) as f:
+        users = set()
+        for line in f.readlines():
+            event = line.strip()
+            regex = r"ticky: \b(ERROR|INFO)\b.* [\w\s\[\]\'\# ]* \(([\w ]*)\)$"
+            user = re.search(regex, event)
+            if user:
+                users.add(user.group(2))
+        f.close()
+#    print(users)
+    return sorted(users)
+
+
+
+userlist = create_userlist(syslog)
+#print(userlist)
+
+error_report(get_ticky_events(syslog))
+usage_report(get_ticky_stats(syslog))
+
+print('EOF')
+
