@@ -1,23 +1,32 @@
 #!/usr/bin/env python3
 
-import reports
+import reports, os, sys
 from datetime import date
 import emails
 
+user = str(os.environ.get('USER') )
+recipient = user + "@example.com"
+body = "All fruits are uploaded to our website successfully. A detailed list is attached to this email."
 
-attachment = 'processed.pdf'
+file = 'processed.pdf'
 home = os.environ.get('HOME')
 desc_dir = home + "/supplier-data/descriptions/"
 
-title = "Processed Update on "
-date = date.today().strftime("%d %B %Y")
+date = date.today().strftime("%B %d, %Y")
+title = "Processed Update on " + date
 
 
 def main(argv):
-    summary = reports.get_all_fruits
+    #reports.main()
+    tbl = reports.get_all_fruits()
+    # for _ in reports.get_all_fruits().split('\n'):
+    #     tbl.append(_)
+    print(tbl)
+    print(type(tbl))
+    reports.generate_report(file, title, tbl)
 
-    reports.generate_report(attachment,title, summary)
+    msg = emails.generate_email('automation@example.com', recipient, "Upload Completed - Online Fruit Store",body, file)
+    emails.send_email(msg)
 
-
-if name == '__name__':
+if __name__ == '__main__':
     main(sys.argv)

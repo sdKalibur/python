@@ -18,6 +18,7 @@ weight: 200 lbs
 """
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Spacer, Paragraph, Table
+from reportlab.lib import colors
 
 import os,sys
 from datetime import date
@@ -26,18 +27,20 @@ from datetime import date
 filename = 'processed.pdf'
 #home = os.environ.get('HOME')
 desc_dir =  os.getcwd() + "/supplier-data/descriptions/"
-date = date.today().strftime("%d %B %Y")
+date = date.today().strftime("%B d%, %Y")
 
 title = "Processed Update on " + date
 
 def generate_report(filename, title, table_data):
     styles = getSampleStyleSheet()
     report_title = Paragraph(title, styles["h1"])
-    report_date = Paragraph(date, styles["h1"])
+    # report_data = Table(table_data, styles["h1"])
+    #sreport_date = Paragraph(date, styles["h1"])
     report = SimpleDocTemplate(filename)
-    report_table = Table(data=table_data, hAlign="LEFT")
+    table_style = [('GRID', (0,0), (0,0), 0, colors.white)]
+    report_data = Paragraph(table_data)
     empty_line = Spacer(1,20)
-    report.build([report_title,  empty_line, report_table, empty_line ])
+    report.build([report_title,  empty_line, report_data, empty_line ])
 
 
 
@@ -53,12 +56,21 @@ def get_all_fruits():
         if 'txt' in i.lower():
             desc_file = desc_dir + i
             name, weight = get_fruit_data(desc_file)
-            fruit_stats.append(['Name:', name])
-            fruit_stats.append(['Weight:', weight])
-            fruit_stats.append('\n')
-    return fruit_stats
+            fruit_stats.append([{'name': name}, {'weight': weight}])
+    #print(fruit_stats)
+        content = ''
+        for k,v in fruit_stats:
+            print(k,v)
+            name, value = k['name'], v['weight']
+            content += '<br></br>name: {} \n<br></br>weight: {}\n<br></br>\n'.format(name,value)
+            print('{}'.format(content))
+    return content
 
-table_data = get_all_fruits()
+# table_data = [ _ for _ in get_all_fruits().split('\n') ]
+print(get_all_fruits())
 
+def main():
+    generate_report(filename, title, table_data)
 
-generate_report(filename, title, table_data)
+if "__name__" == "__main__":
+    main(sys.argv)
